@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>360 Drone Panorama Viewer</title>
+    <!-- A-Frame library for 360/VR -->
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <!-- Load custom font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Upload Interface -->
+    <div id="upload-container" class="active">
+        <div class="glass-panel">
+            <h1>360 Panorama Viewer</h1>
+            <p>Upload a panoramic image from your DJI Mini 4K</p>
+            <label for="file-input" class="upload-btn">
+                Select 360 Image or Video
+                <input type="file" id="file-input" accept="image/jpeg, image/png, video/mp4, video/webm">
+            </label>
+        </div>
+    </div>
+
+    <!-- Gyroscope Permission Overlay (hidden by default) -->
+    <div id="gyro-overlay">
+        <div class="glass-panel">
+            <h2>Enable Motion Controls</h2>
+            <p>To look around by moving your phone, please grant gyroscope access.</p>
+            <button id="enable-gyro-btn" class="upload-btn">Enable Gyroscope</button>
+            <button id="skip-gyro-btn" class="skip-btn">Skip</button>
+        </div>
+    </div>
+
+    <!-- 360 Viewer (hidden by default) -->
+    <div id="viewer-container">
+        <!-- A-Frame scene will be injected here dynamically -->
+        <div id="scene-wrapper" style="width: 100%; height: 100%;"></div>
+        
+        <!-- UI Overlay inside viewer to go back -->
+        <button id="close-viewer-btn" class="close-btn">✕ Close Viewer</button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
