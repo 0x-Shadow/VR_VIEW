@@ -16,9 +16,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const file = e.target.files[0];
         if (!file) return;
 
-        window.uploadedFileType = file.type;
+        // Detect video by MIME type or file extension (some OS/cameras don't set MIME type)
+        const isVideo = file.type.startsWith('video/') || 
+                        file.name.toLowerCase().match(/\.(mp4|mov|mkv|webm)$/i);
+        
+        window.uploadedFileType = isVideo ? 'video/mp4' : 'image/jpeg';
 
-        if (file.type.startsWith('video/')) {
+        if (isVideo) {
             window.uploadedFileUrl = URL.createObjectURL(file);
             proceedWithUpload();
         } else {
