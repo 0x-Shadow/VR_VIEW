@@ -64,9 +64,9 @@ document.addEventListener("DOMContentLoaded", () => {
     fullscreenBtn.addEventListener('click', () => {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen().then(() => {
-                // Lock the screen orientation to prevent the browser from flipping the page when rotating the phone
+                // Force lock the screen to horizontal (landscape) to prevent reloading
                 if (screen.orientation && screen.orientation.lock) {
-                    screen.orientation.lock(screen.orientation.type).catch(err => {
+                    screen.orientation.lock("landscape").catch(err => {
                         console.log('Orientation lock failed:', err);
                     });
                 }
