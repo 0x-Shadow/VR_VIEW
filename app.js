@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const fileInput = document.getElementById('file-input');
-    const uploadContainer = document.getElementById('upload-container');
+    const landingPage = document.getElementById('landing-page');
     const gyroOverlay = document.getElementById('gyro-overlay');
     const viewerContainer = document.getElementById('viewer-container');
     const sceneWrapper = document.getElementById('scene-wrapper');
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         function proceedToViewer() {
-            uploadContainer.classList.remove('active');
+            landingPage.classList.remove('active');
             if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
                 gyroOverlay.classList.add('active');
             } else {
@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.exitFullscreen();
         }
         viewerContainer.classList.remove('active');
-        uploadContainer.classList.add('active');
+        landingPage.classList.add('active');
         sceneWrapper.innerHTML = ''; 
         if (videoElement) {
             videoElement.pause();
@@ -172,4 +172,28 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
         }
     }
+
+    // Gallery example thumbnails — load image via fetch → DataURL
+    document.querySelectorAll('.gallery-card').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const src = btn.dataset.src;
+            fetch(src)
+                .then(r => r.blob())
+                .then(blob => {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        window.uploadedFileUrl = ev.target.result;
+                        window.uploadedFileType = 'image/jpeg';
+                        landingPage.classList.remove('active');
+                        if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                            gyroOverlay.classList.add('active');
+                        } else {
+                            showViewer();
+                        }
+                    };
+                    reader.readAsDataURL(blob);
+                })
+                .catch(err => console.error('Gallery load error:', err));
+        });
+    });
 });

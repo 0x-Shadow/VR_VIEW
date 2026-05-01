@@ -11,22 +11,64 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Upload Interface -->
-    <div id="upload-container" class="active aurora-bg">
-        <div class="glass-panel">
-            <h1>360 Panorama Viewer</h1>
-            <p>Upload a panoramic image or video from your DJI / Insta360</p>
-            
-            <div class="drop-zone" id="drop-zone">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                </svg>
-                <span class="drop-text">Drag & Drop or Click to Browse</span>
-                <span class="supported-formats">Supports MP4, WEBM, JPG, PNG</span>
-                <input type="file" id="file-input" accept="image/*,video/*">
-            </div>
+    <!-- Main Landing Page -->
+    <div id="landing-page" class="active aurora-bg">
+        <div class="content-wrapper">
+            <!-- Upload Section -->
+            <section id="upload-section">
+                <div class="glass-panel">
+                    <h1>360 Panorama Viewer</h1>
+                    <p>Upload a panoramic image or video from your DJI / Insta360</p>
+                    
+                    <div class="drop-zone" id="drop-zone">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <span class="drop-text">Drag & Drop or Click to Browse</span>
+                        <span class="supported-formats">Supports MP4, WEBM, JPG, PNG</span>
+                        <input type="file" id="file-input" accept="image/*,video/*">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Gallery Section -->
+            <section id="gallery">
+                <div class="gallery-container">
+                    <div class="gallery-divider">
+                        <span class="gallery-divider-line"></span>
+                        <span class="gallery-label">&#9672; Example Gallery</span>
+                        <span class="gallery-divider-line"></span>
+                    </div>
+                    <div class="gallery-grid">
+                        <button class="gallery-card" data-src="Gallery/dji_fly_20251005_081650_114_1759641623186_pano_optimized.jpg">
+                            <img src="Gallery/dji_fly_20251005_081650_114_1759641623186_pano_optimized.jpg" alt="Panorama 1" loading="lazy">
+                            <div class="gallery-card-overlay">
+                                <span class="gallery-card-icon">&#9673;</span>
+                                <span class="gallery-card-cta">View 360&deg;</span>
+                            </div>
+                            <span class="gallery-badge">01</span>
+                        </button>
+                        <button class="gallery-card" data-src="Gallery/dji_fly_20260330_084922_166_1774849987472_pano_optimized.jpg">
+                            <img src="Gallery/dji_fly_20260330_084922_166_1774849987472_pano_optimized.jpg" alt="Panorama 2" loading="lazy">
+                            <div class="gallery-card-overlay">
+                                <span class="gallery-card-icon">&#9673;</span>
+                                <span class="gallery-card-cta">View 360&deg;</span>
+                            </div>
+                            <span class="gallery-badge">02</span>
+                        </button>
+                        <button class="gallery-card" data-src="Gallery/dji_fly_20260330_122738_172_1774863510072_pano_optimized.jpg">
+                            <img src="Gallery/dji_fly_20260330_122738_172_1774863510072_pano_optimized.jpg" alt="Panorama 3" loading="lazy">
+                            <div class="gallery-card-overlay">
+                                <span class="gallery-card-icon">&#9673;</span>
+                                <span class="gallery-card-cta">View 360&deg;</span>
+                            </div>
+                            <span class="gallery-badge">03</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
 
