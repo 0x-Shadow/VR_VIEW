@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const fullscreenBtn = document.getElementById('fullscreen-btn');
     const enableGyroBtn = document.getElementById('enable-gyro-btn');
     const skipGyroBtn = document.getElementById('skip-gyro-btn');
+    const dropZone = document.getElementById('drop-zone');
 
     let objectURL = null;
     let videoElement = null;
@@ -26,12 +27,9 @@ document.addEventListener("DOMContentLoaded", () => {
             window.uploadedFileUrl = URL.createObjectURL(file);
             proceedWithUpload();
         } else {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                window.uploadedFileUrl = e.target.result;
-                proceedWithUpload();
-            };
-            reader.readAsDataURL(file);
+            // Using ObjectURL instead of DataURL to preserve pure 4K/8K image quality without Base64 compression
+            window.uploadedFileUrl = URL.createObjectURL(file);
+            proceedWithUpload();
         }
 
         function proceedWithUpload() {
@@ -43,6 +41,26 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
+
+    // Drag and Drop UI Effects
+    if (dropZone) {
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
+        });
+    }
 
     enableGyroBtn.addEventListener('click', () => {
         if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
@@ -98,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
             videoElement.remove();
             videoElement = null;
         }
-        if (window.uploadedFileType && window.uploadedFileType.startsWith('video/')) {
+        if (window.uploadedFileUrl) {
             URL.revokeObjectURL(window.uploadedFileUrl);
         }
         window.uploadedFileUrl = null;
@@ -124,8 +142,9 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.appendChild(videoElement);
 
             sceneWrapper.innerHTML = `
-                <a-scene embedded style="width: 100%; height: 100%;">
-                    <a-videosphere src="#pano-video"></a-videosphere>
+                <a-scene embedded renderer="antialias: true; colorManagement: true; highRefreshRate: true;" style="width: 100%; height: 100%;">
+                    <!-- Segments increased to 128x64 for smoother 4K texture wrapping -->
+                    <a-videosphere src="#pano-video" segments-width="128" segments-height="64"></a-videosphere>
                     <a-entity camera look-controls></a-entity>
                 </a-scene>
             `;
@@ -139,8 +158,9 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             // Setup for 360 image
             sceneWrapper.innerHTML = `
-                <a-scene embedded style="width: 100%; height: 100%;">
-                    <a-sky src="${window.uploadedFileUrl}"></a-sky>
+                <a-scene embedded renderer="antialias: true; colorManagement: true; highRefreshRate: true;" style="width: 100%; height: 100%;">
+                    <!-- Segments increased to 128x64 for smoother 4K texture wrapping -->
+                    <a-sky src="${window.uploadedFileUrl}" segments-width="128" segments-height="64"></a-sky>
                     <a-entity camera look-controls></a-entity>
                 </a-scene>
             `;

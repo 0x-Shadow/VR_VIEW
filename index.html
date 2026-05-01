@@ -12,14 +12,21 @@
 </head>
 <body>
     <!-- Upload Interface -->
-    <div id="upload-container" class="active">
+    <div id="upload-container" class="active aurora-bg">
         <div class="glass-panel">
             <h1>360 Panorama Viewer</h1>
-            <p>Upload a panoramic image from your DJI Mini 4K</p>
-            <label for="file-input" class="upload-btn">
-                Select 360 Image or Video
+            <p>Upload a panoramic image or video from your DJI / Insta360</p>
+            
+            <div class="drop-zone" id="drop-zone">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span class="drop-text">Drag & Drop or Click to Browse</span>
+                <span class="supported-formats">Supports MP4, WEBM, JPG, PNG</span>
                 <input type="file" id="file-input" accept="image/*,video/*">
-            </label>
+            </div>
         </div>
     </div>
 
