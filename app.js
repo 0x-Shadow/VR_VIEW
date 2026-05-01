@@ -63,7 +63,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     fullscreenBtn.addEventListener('click', () => {
         if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(err => {
+            document.documentElement.requestFullscreen().then(() => {
+                // Lock the screen orientation to prevent the browser from flipping the page when rotating the phone
+                if (screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock(screen.orientation.type).catch(err => {
+                        console.log('Orientation lock failed:', err);
+                    });
+                }
+            }).catch(err => {
                 console.log(`Error attempting to enable fullscreen: ${err.message}`);
             });
         } else {
