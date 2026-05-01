@@ -135,24 +135,38 @@ input[type="file"] {
     display: block;
 }
 
-.close-btn {
+.viewer-controls {
     position: absolute;
     top: 20px;
     right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 20;
+}
+
+.control-btn {
     background: rgba(0, 0, 0, 0.6);
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.15);
     padding: 12px 20px;
     border-radius: 10px;
     cursor: pointer;
-    z-index: 20;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     font-weight: 500;
     font-size: 14px;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.control-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: scale(1.05);
+}
+
+.close-btn {
+    background: rgba(220, 53, 69, 0.6);
 }
 
 .close-btn:hover {
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(220, 53, 69, 0.9);
 }

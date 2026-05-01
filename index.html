@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>360 Drone Panorama Viewer</title>
     <!-- A-Frame library for 360/VR -->
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
@@ -38,8 +38,11 @@
         <!-- A-Frame scene will be injected here dynamically -->
         <div id="scene-wrapper" style="width: 100%; height: 100%;"></div>
         
-        <!-- UI Overlay inside viewer to go back -->
-        <button id="close-viewer-btn" class="close-btn">✕ Close Viewer</button>
+        <!-- UI Overlay inside viewer -->
+        <div class="viewer-controls">
+            <button id="fullscreen-btn" class="control-btn">⛶ Fullscreen</button>
+            <button id="close-viewer-btn" class="control-btn close-btn">✕ Close Viewer</button>
+        </div>
     </div>
 
     <script src="app.js"></script>
