@@ -8,58 +8,57 @@ document.addEventListener("DOMContentLoaded", () => {
     const fullscreenBtn = document.getElementById('fullscreen-btn');
     const enableGyroBtn = document.getElementById('enable-gyro-btn');
     const skipGyroBtn = document.getElementById('skip-gyro-btn');
+
     const dropZone = document.getElementById('drop-zone');
 
     let objectURL = null;
     let videoElement = null;
 
+    // Drag and Drop Handling
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+        }, false);
+    });
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        const file = e.dataTransfer.files[0];
+        if (file) handleFile(file);
+    });
+
     fileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
-        if (!file) return;
+        if (file) handleFile(file);
+    });
 
+    function handleFile(file) {
         // Detect video by MIME type or file extension (some OS/cameras don't set MIME type)
         const isVideo = file.type.startsWith('video/') || 
                         file.name.toLowerCase().match(/\.(mp4|mov|mkv|webm)$/i);
         
         window.uploadedFileType = isVideo ? 'video/mp4' : 'image/jpeg';
-
-        if (isVideo) {
-            window.uploadedFileUrl = URL.createObjectURL(file);
-            proceedWithUpload();
+        
+        // Always use ObjectURL for raw quality (avoids DataURL memory/resolution limits)
+        if (window.uploadedFileUrl) {
+            URL.revokeObjectURL(window.uploadedFileUrl);
+        }
+        window.uploadedFileUrl = URL.createObjectURL(file);
+        
+        uploadContainer.classList.remove('active');
+        if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+            gyroOverlay.classList.add('active');
         } else {
-            // Using ObjectURL instead of DataURL to preserve pure 4K/8K image quality without Base64 compression
-            window.uploadedFileUrl = URL.createObjectURL(file);
-            proceedWithUpload();
+            showViewer();
         }
-
-        function proceedWithUpload() {
-            uploadContainer.classList.remove('active');
-            if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-                gyroOverlay.classList.add('active');
-            } else {
-                showViewer();
-            }
-        }
-    });
-
-    // Drag and Drop UI Effects
-    if (dropZone) {
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, preventDefaults, false);
-        });
-
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
-        });
     }
 
     enableGyroBtn.addEventListener('click', () => {
@@ -116,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
             videoElement.remove();
             videoElement = null;
         }
-        if (window.uploadedFileUrl) {
+        if (window.uploadedFileType && window.uploadedFileType.startsWith('video/')) {
             URL.revokeObjectURL(window.uploadedFileUrl);
         }
         window.uploadedFileUrl = null;
@@ -129,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
         viewerContainer.classList.add('active');
         
         if (window.uploadedFileType && window.uploadedFileType.startsWith('video/')) {
-            // Setup for 360 video - Create element directly to ensure A-Frame maps it properly
+            // Setup for 360 video
             videoElement = document.createElement('video');
             videoElement.id = 'pano-video';
             videoElement.autoplay = true;
@@ -138,28 +137,25 @@ document.addEventListener("DOMContentLoaded", () => {
             videoElement.webkitPlaysInline = true;
             videoElement.crossOrigin = 'anonymous';
             videoElement.src = window.uploadedFileUrl;
-            videoElement.style.display = 'none'; // Hide the raw element
+            videoElement.style.display = 'none';
             document.body.appendChild(videoElement);
 
             sceneWrapper.innerHTML = `
-                <a-scene embedded renderer="antialias: true; colorManagement: true; highRefreshRate: true;" style="width: 100%; height: 100%;">
-                    <!-- Segments increased to 128x64 for smoother 4K texture wrapping -->
+                <a-scene embedded renderer="antialias: true; colorManagement: true; physicallyCorrectLights: false;" style="width: 100%; height: 100%;">
                     <a-videosphere src="#pano-video" segments-width="128" segments-height="64"></a-videosphere>
                     <a-entity camera look-controls></a-entity>
                 </a-scene>
             `;
             
-            // Trigger playback specifically since mobile often blocks autoplay
             setTimeout(() => {
                 if (videoElement) {
                     videoElement.play().catch(e => console.log('Autoplay blocked:', e));
                 }
             }, 500);
         } else {
-            // Setup for 360 image
+            // Setup for 360 image - High res segments for 4K/8K
             sceneWrapper.innerHTML = `
-                <a-scene embedded renderer="antialias: true; colorManagement: true; highRefreshRate: true;" style="width: 100%; height: 100%;">
-                    <!-- Segments increased to 128x64 for smoother 4K texture wrapping -->
+                <a-scene embedded renderer="antialias: true; colorManagement: true;" style="width: 100%; height: 100%;">
                     <a-sky src="${window.uploadedFileUrl}" segments-width="128" segments-height="64"></a-sky>
                     <a-entity camera look-controls></a-entity>
                 </a-scene>
