@@ -41,23 +41,33 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function handleFile(file) {
-        // Detect video by MIME type or file extension (some OS/cameras don't set MIME type)
         const isVideo = file.type.startsWith('video/') || 
                         file.name.toLowerCase().match(/\.(mp4|mov|mkv|webm)$/i);
         
         window.uploadedFileType = isVideo ? 'video/mp4' : 'image/jpeg';
         
-        // Always use ObjectURL for raw quality (avoids DataURL memory/resolution limits)
-        if (window.uploadedFileUrl) {
-            URL.revokeObjectURL(window.uploadedFileUrl);
-        }
-        window.uploadedFileUrl = URL.createObjectURL(file);
-        
-        uploadContainer.classList.remove('active');
-        if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-            gyroOverlay.classList.add('active');
+        if (isVideo) {
+            // Videos use ObjectURL — they are referenced by element ID, not as a src string
+            if (window.uploadedFileUrl) URL.revokeObjectURL(window.uploadedFileUrl);
+            window.uploadedFileUrl = URL.createObjectURL(file);
+            proceedToViewer();
         } else {
-            showViewer();
+            // Images must use DataURL so A-Frame can trust and load the texture
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                window.uploadedFileUrl = ev.target.result;
+                proceedToViewer();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function proceedToViewer() {
+            uploadContainer.classList.remove('active');
+            if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                gyroOverlay.classList.add('active');
+            } else {
+                showViewer();
+            }
         }
     }
 
